@@ -1,8 +1,9 @@
 package binder
 
 import (
-	"github.com/yuin/gopher-lua"
 	"io/ioutil"
+
+	"github.com/yuin/gopher-lua"
 )
 
 // Handler is binder function handler
@@ -35,6 +36,16 @@ func (b *Binder) DoFile(f string) error {
 		s, _ := ioutil.ReadFile(f)
 		return newSource(string(s), problem)
 	})
+}
+
+// DoFunc allows access to
+func (b *Binder) DoFunc(fn func(*lua.LState) error) error {
+	b.load()
+	err := fn(b.state)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // do applies returns improved errors if it needed
